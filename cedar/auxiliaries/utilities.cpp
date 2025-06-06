@@ -478,7 +478,6 @@ unsigned int cedar::aux::generateCR32Checksum(const char *message, int message_l
             mask = -(crc & 1);
             crc = (crc >> 1) ^ (0xEDB88320 & mask);
         }
-        i = i + 1;
     }
     return ~crc;
 }
