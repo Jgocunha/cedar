@@ -61,9 +61,9 @@
 cedar::dev::SerialChannel::SerialChannel()
 :
 mCommandDelimiter("\r\n"),
-mIoService(),
-mPort(mIoService),
-mTimer(mIoService),
+mIoContext(),
+mPort(mIoContext),
+mTimer(mIoContext),
 _mDevicePath(new cedar::aux::StringParameter(this, "device path", "/dev/rfcomm0")),
 _mEscapedCommandDelimiter(new cedar::aux::StringParameter(this, "escaped command delimiter", "\\r\\n")),
 _mBaudRate(new cedar::aux::UIntParameter(this, "baud rate", 115200, 0, 8000000)),
@@ -209,7 +209,7 @@ std::string cedar::dev::SerialChannel::read()
       // start the reading process
       // run_one() will block until the delimiter is found, in which case readCompleted() is called,
       // or the timeout expires, in which case timeoutExpired() is called
-      mIoService.run_one();
+      mIoContext.run_one();
 
       switch(mReadResult)
       {

@@ -50,7 +50,7 @@
 
 // SYSTEM INCLUDES
 #include <opencv2/opencv.hpp>
-#include <QGLWidget>
+#include <QOpenGLWidget>
 #include <string>
 
 /*! @brief A grabber to grab from a QGLWidget
@@ -84,19 +84,19 @@ public:
    */
   GLGrabber
   (
-    QGLWidget *qglWidget,
+    QOpenGLWidget *qglWidget,
     const std::string& grabberName = "GLGrabber"
   );
 
   /*! @brief Constructor for a stereo channel grabber
    *  @param grabberName  Name of the grabber
-   *  @param qglWidget0 Class derived from QGLWidget to grab from for channel 0
-   *  @param qglWidget1 Class derived from QGLWidget to grab from for channel 1
+   *  @param qglWidget0 Class derived from QOpenGLWidget to grab from for channel 0
+   *  @param qglWidget1 Class derived from QOpenGLWidget to grab from for channel 1
    */
   GLGrabber
   (
-    QGLWidget *qglWidget0,
-    QGLWidget *qglWidget1,
+    QOpenGLWidget *qglWidget0,
+    QOpenGLWidget *qglWidget1,
     const std::string& grabberName = "StereoGLGrabber"
   );
 
@@ -115,7 +115,7 @@ public:
    * @throw cedar::aux::IndexOutOfRangeException When the channel is out of range
    * @throw cedar::dev::sensors::visual::InvalidParameterException When the qglWidget is a NULL-pointer
    */
-  void setWidget(unsigned int channel, QGLWidget *qglWidget);
+  void setWidget(unsigned int channel, QOpenGLWidget *qglWidget);
 
   //--------------------------------------------------------------------------------------------------------------------
   // protected methods

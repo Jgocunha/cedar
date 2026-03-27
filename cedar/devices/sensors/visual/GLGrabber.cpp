@@ -44,7 +44,7 @@
 #include "cedar/devices/sensors/visual/exceptions.h"
 
 // SYSTEM INCLUDES
-
+#include <QOpenGLWidget>
 //----------------------------------------------------------------------------------------------------------------------
 // register the class
 //----------------------------------------------------------------------------------------------------------------------
@@ -63,7 +63,7 @@ namespace
 // Constructor for a single-channel grabber
 cedar::dev::sensors::visual::GLGrabber::GLGrabber
 (
-  QGLWidget *qglWidget,
+  QOpenGLWidget *qglWidget,
   const std::string& grabberName
 )
 :
@@ -83,8 +83,8 @@ cedar::dev::sensors::visual::Grabber
 // Constructor for a stereo grabber
 cedar::dev::sensors::visual::GLGrabber::GLGrabber
 (
-  QGLWidget *qglWidget0,
-  QGLWidget *qglWidget1,
+  QOpenGLWidget *qglWidget0,
+  QOpenGLWidget *qglWidget1,
   const std::string& grabberName
 )
 :
@@ -136,7 +136,7 @@ void cedar::dev::sensors::visual::GLGrabber::onCleanUp()
   unsigned int num_channels = getNumChannels();
   for(unsigned int channel = 0; channel < num_channels; ++channel)
   {
-    getGLChannel(channel)->mpQGLWidget = NULL;
+    getGLChannel(channel)->mpQOpenGLWidget = NULL;
   }
 }
 
@@ -146,7 +146,7 @@ std::string cedar::dev::sensors::visual::GLGrabber::onGetSourceInfo(unsigned int
   // value of channel is already checked by GraberInterface::getSourceInfo()
   return "Channel " + cedar::aux::toString(channel)
                                       + ": QT::OGLWidget class \""
-                                      + typeid(getGLChannel(channel)->mpQGLWidget).name()
+                                      + typeid(getGLChannel(channel)->mpQOpenGLWidget).name()
                                       + "\"";
 }
 
@@ -154,7 +154,7 @@ std::string cedar::dev::sensors::visual::GLGrabber::onGetSourceInfo(unsigned int
 void cedar::dev::sensors::visual::GLGrabber::onGrab(unsigned int channel)
 {
   // pointer to the QGLWidget
-  QGLWidget* p_channel_widget = getGLChannel(channel)->mpQGLWidget;
+  QOpenGLWidget* p_channel_widget = getGLChannel(channel)->mpQOpenGLWidget;
 
   if (p_channel_widget == NULL)
   {
@@ -174,8 +174,8 @@ void cedar::dev::sensors::visual::GLGrabber::onGrab(unsigned int channel)
   //   It is not possible to reach this from this grabber. So keep in mind:
   // ATTENTION: This grabbing is only possible in the GUI-Thread!!!
 
-  glReadBuffer(GL_FRONT_RIGHT);
-  QImage qimage = p_channel_widget->grabFrameBuffer(false);
+  //glReadBuffer(GL_FRONT_RIGHT);
+  QImage qimage = p_channel_widget->grabFramebuffer();
   // p_channel_widget->doneCurrent();
 
   // convert QImage to cv::Mat
@@ -190,7 +190,7 @@ void cedar::dev::sensors::visual::GLGrabber::onGrab(unsigned int channel)
 }
 
 
-void cedar::dev::sensors::visual::GLGrabber::setWidget(unsigned int channel, QGLWidget *qglWidget)
+void cedar::dev::sensors::visual::GLGrabber::setWidget(unsigned int channel, QOpenGLWidget *qglWidget)
 {
   if (channel >= getNumChannels())
   {
@@ -215,7 +215,7 @@ void cedar::dev::sensors::visual::GLGrabber::setWidget(unsigned int channel, QGL
   }
 
   // change source
-  getGLChannel(channel)->mpQGLWidget = qglWidget;
+  getGLChannel(channel)->mpQOpenGLWidget = qglWidget;
 
   // get first new image
   this->grab();

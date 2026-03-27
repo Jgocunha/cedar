@@ -712,31 +712,45 @@ cedar::aux::DirectoryParameterPtr cedar::proc::gui::Settings::lastArchitectureEx
   return this->mArchitectureExportDialogDirectory;
 }
 
+#include <QGuiApplication>
+
+namespace
+{
+  bool isWaylandPlatform()
+  {
+    return QGuiApplication::platformName().contains("wayland", Qt::CaseInsensitive);
+  }
+}
+
 void cedar::proc::gui::Settings::storeMainWindow(QMainWindow *pWindow)
 {
   QByteArray window_state = pWindow->saveState();
-  QByteArray window_state_hex = window_state.toHex();
-  mMainWindowState->setValue(window_state_hex.constData());
-  
-  QByteArray window_geometry = pWindow->saveGeometry();
-  QByteArray window_geometry_hex = window_geometry.toHex();
-  mMainWindowGeometry->setValue(window_geometry_hex.constData());
+  mMainWindowState->setValue(window_state.toHex().constData());
+
+  if (!isWaylandPlatform())
+  {
+    QByteArray window_geometry = pWindow->saveGeometry();
+    mMainWindowGeometry->setValue(window_geometry.toHex().constData());
+  }
 }
 
 void cedar::proc::gui::Settings::restoreMainWindow(QMainWindow *pWindow)
 {
+  if (!isWaylandPlatform())
+  {
+    QByteArray window_geometry_hex(mMainWindowGeometry->getValue().c_str());
+    QByteArray window_geometry = QByteArray::fromHex(window_geometry_hex);
+    if (!window_geometry.isEmpty() && !pWindow->restoreGeometry(window_geometry))
+    {
+      std::cout << "Could not restore geometry of the main window." << std::endl;
+    }
+  }
+
   QByteArray window_state_hex(mMainWindowState->getValue().c_str());
   QByteArray window_state = QByteArray::fromHex(window_state_hex);
-  if (!pWindow->restoreState(window_state))
+  if (!window_state.isEmpty() && !pWindow->restoreState(window_state))
   {
     std::cout << "Could not restore state of the main window." << std::endl;
-  }
-  
-  QByteArray window_geometry_hex(mMainWindowGeometry->getValue().c_str());
-  QByteArray window_geometry = QByteArray::fromHex(window_geometry_hex);
-  if (!pWindow->restoreGeometry(window_geometry))
-  {
-    std::cout << "Could not restore geometry of the main window." << std::endl;
   }
 }
 

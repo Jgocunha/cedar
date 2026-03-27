@@ -75,10 +75,21 @@
 #include <QMenu>
 #include <QPainter>
 #include <QFileDialog>
+#include <QGuiApplication>
+#include <QHBoxLayout>
+#include <QVBoxLayout>
 #include <QGraphicsSceneContextMenuEvent>
 
 //! declares a metatype for slot pointers; used by the serialization menu
 Q_DECLARE_METATYPE(boost::shared_ptr<cedar::proc::DataSlot>);
+
+namespace
+{
+  bool isWaylandPlatform()
+  {
+    return QGuiApplication::platformName().contains("wayland", Qt::CaseInsensitive);
+  }
+}
 
 #ifdef CEDAR_USE_QGLVIEWER
 #if defined CEDAR_USE_GLEW
@@ -2003,7 +2014,29 @@ QWidget* cedar::proc::gui::Connectable::createDockWidget(const std::string& titl
     p_dock->setContentsMargins(0, 0, 0, 0);
     p_dock->setAllowedAreas(Qt::NoDockWidgetArea);
     QRect g = pWidget->geometry();
-    p_dock->setWidget(pWidget);
+    if (isWaylandPlatform())
+    {
+      auto p_button_wrapper = new QWidget();
+      auto p_wrapper_layout = new QVBoxLayout();
+      p_wrapper_layout->setContentsMargins(0, 0, 0, 0);
+      p_wrapper_layout->setSpacing(0);
+
+      auto p_button_row = new QHBoxLayout();
+      p_button_row->setContentsMargins(4, 4, 4, 0);
+      p_button_row->setSpacing(4);
+      p_button_row->addStretch();
+      p_button_row->addWidget(p_dock->getJumpButton());
+      p_button_row->addWidget(p_dock->getDeleteButton());
+
+      p_wrapper_layout->addLayout(p_button_row);
+      p_wrapper_layout->addWidget(pWidget);
+      p_button_wrapper->setLayout(p_wrapper_layout);
+      p_dock->setWidget(p_button_wrapper);
+    }
+    else
+    {
+      p_dock->setWidget(pWidget);
+    }
 
     QObject::connect(p_dock->getDeleteButton(),SIGNAL(clicked()),p_dock,SLOT(close()));
     QObject::connect(p_dock->getJumpButton(),SIGNAL(clicked()),this,SLOT(jumpToSource()));

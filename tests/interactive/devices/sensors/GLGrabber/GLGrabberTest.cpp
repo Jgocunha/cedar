@@ -150,7 +150,7 @@ int main(int argc, char **argv)
                 (
                   new cedar::dev::sensors::visual::GLGrabber
                       (
-                       static_cast<QGLWidget *>(&viewer),
+                       static_cast<QOpenGLWidget *>(&viewer),
                        GRABBER_NAME // not necessary
                       )
                 );

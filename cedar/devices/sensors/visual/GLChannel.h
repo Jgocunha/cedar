@@ -47,7 +47,7 @@
 #include "cedar/devices/sensors/visual/GrabberChannel.h"
 
 // SYSTEM INCLUDES
-#include <QGLWidget>
+#include <QOpenGLWidget>
 
 //!@brief Class GLChannel contains additional data of an QGLWidget-grabbing channel
 class cedar::dev::sensors::visual::GLChannel
@@ -65,10 +65,10 @@ public cedar::dev::sensors::visual::GrabberChannel
   //--------------------------------------------------------------------------------------------------------------------
 public:
   //!@brief The standard constructor.
-  GLChannel(QGLWidget* qglWidget=NULL)
+  GLChannel(QOpenGLWidget* qglWidget=NULL)
   :
   cedar::dev::sensors::visual::GrabberChannel(),
-  mpQGLWidget(qglWidget)
+  mpQOpenGLWidget(qglWidget)
   {
   }
   //!@brief Destructor
@@ -99,7 +99,7 @@ private:
   //--------------------------------------------------------------------------------------------------------------------
 protected:
   //! @brief The QT OpenGL widget
-  QGLWidget* mpQGLWidget ;
+  QOpenGLWidget* mpQOpenGLWidget ;
 
 private:
   // none yet

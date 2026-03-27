@@ -157,7 +157,7 @@ private:
   //! string that signals the end of commands
   std::string mCommandDelimiter;
   //! IO service object
-  boost::asio::io_service mIoService;
+  boost::asio::io_context mIoContext;
   //! serial port object
   boost::asio::serial_port mPort;
   //! timer for the timeout

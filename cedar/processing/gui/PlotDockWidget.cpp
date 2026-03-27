@@ -46,10 +46,19 @@
 // CEDAR INCLUDES
 #include "cedar/processing/gui/PlotDockWidget.h"
 #include <QHBoxLayout>
+#include <QGuiApplication>
 
 
 
 // SYSTEM INCLUDES
+
+namespace
+{
+  bool isWaylandPlatform()
+  {
+    return QGuiApplication::platformName().contains("wayland", Qt::CaseInsensitive);
+  }
+}
 
 //----------------------------------------------------------------------------------------------------------------------
 // constructors and destructor
@@ -58,7 +67,7 @@ cedar::proc::gui::PlotDockWidget::PlotDockWidget(const QString & title, QWidget 
         :
         QDockWidget(title,parent,flags)
 {
-  mTitleLabel = new QLabel(title);
+  mTitleLabel = new QLabel(title, this);
   QFont f( "Arial", 10, QFont::Bold);
   mTitleLabel->setFont(f);
   mTitleLabel->setAlignment(Qt::AlignVCenter);
@@ -66,31 +75,29 @@ cedar::proc::gui::PlotDockWidget::PlotDockWidget(const QString & title, QWidget 
 
 
 
-  //Construct titlebar
-  QWidget* titleBarWidget = new QWidget();
-  auto layout = new QHBoxLayout();
-  layout->setContentsMargins(0, 0, 0, 0);
-
   int buttonSize =15;
-  mJumpButton = new QPushButton(QIcon(":/cedar/auxiliaries/gui/jump.svg"),"");
+  mJumpButton = new QPushButton(QIcon(":/cedar/auxiliaries/gui/jump.svg"),"", this);
   mJumpButton->setFixedSize(buttonSize, buttonSize);
   mJumpButton->setIconSize(QSize(buttonSize,buttonSize));
   mJumpButton->setToolTip("jump to the connected step");
 
-  mDeleteButton = new QPushButton();
+  mDeleteButton = new QPushButton(this);
   mDeleteButton->setFixedSize(buttonSize, buttonSize);
   mDeleteButton->setIcon(QIcon(":/cedar/auxiliaries/gui/clear.svg"));
   mDeleteButton->setIconSize(QSize(buttonSize,buttonSize));
   mDeleteButton->setToolTip("close this plot");
 
-
-
-  layout->addWidget(mTitleLabel);
-  layout->addWidget(mJumpButton);
-  layout->addWidget(mDeleteButton);
-  titleBarWidget->setLayout(layout);
-
-  this->setTitleBarWidget(titleBarWidget);
+  if (!isWaylandPlatform())
+  {
+    QWidget* titleBarWidget = new QWidget();
+    auto layout = new QHBoxLayout();
+    layout->setContentsMargins(0, 0, 0, 0);
+    layout->addWidget(mTitleLabel);
+    layout->addWidget(mJumpButton);
+    layout->addWidget(mDeleteButton);
+    titleBarWidget->setLayout(layout);
+    this->setTitleBarWidget(titleBarWidget);
+  }
 
 }
 
@@ -141,7 +148,3 @@ void cedar::proc::gui::PlotDockWidget::paintEvent(QPaintEvent *event)
   painter.drawLine(linepadding,0,width(),0);
   painter.drawLine(linepadding,0,linepadding,height()-(linepadding*2));
 }
-
-
-
-
