@@ -108,7 +108,7 @@ std::string cedar::aux::MatData::getDescription() const
     detailed_description += "<tr><td>Numeric type: </td><td>" + cedar::aux::math::matrixTypeToString(mat) + "</td></tr>";
     detailed_description += "<tr><td>Channels: </td><td>" + cedar::aux::toString(mat.channels()) + "</td>";
 
-    unsigned int memsize;
+    unsigned int memsize = 0;
     std::string memsize_extra= "";
     if (mat.isContinuous())
     {

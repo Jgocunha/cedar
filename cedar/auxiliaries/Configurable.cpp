@@ -86,7 +86,7 @@ cedar::aux::Configurable::~Configurable()
     //TODO: Needs fix. Memory Leak.
     //Only compile this line when the OS is not Apple. Leads to crashes when deleting some elements that have subchildren
     //like neural step, camera and convolution
-    #ifndef CEDAR_OS_APPLE:
+    #ifndef CEDAR_OS_APPLE
     this->mChildren.erase(child);
     #endif
 
